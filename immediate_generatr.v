@@ -1,0 +1,22 @@
+module immediate_generator (
+    input  [31:0] instruction,
+    output reg [31:0] imm_out
+);
+
+    wire [6:0] opcode = instruction[6:0];
+
+    always @(*) begin
+        case (opcode)
+            7'b0010011,           // ADDI, ANDI, ORI, etc.
+            7'b0000011:           // LW
+                imm_out = {{20{instruction[31]}}, instruction[31:20]};
+
+            7'b0100011:           // SW
+                imm_out = {{20{instruction[31]}}, instruction[31:25], instruction[11:7]};
+
+            default:
+                imm_out = 32'b0;
+        endcase
+    end
+
+endmodule
